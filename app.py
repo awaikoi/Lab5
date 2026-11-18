@@ -8,6 +8,8 @@ import models
 from routes import admin_bp, feedback_bp, shop_bp, api_v1, api_v2
 from routes.api.errors import register_error_handlers
 
+from flasgger import Swagger
+
 app = Flask(__name__)
 app.config['DATABASE'] = os.environ.get('DATABASE', os.path.join(app.root_path, 'db.sqlite'))
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-change-me')
@@ -15,6 +17,20 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 + 256 * 1024
 app.register_blueprint(api_v1)
 app.register_blueprint(api_v2)
 register_error_handlers(app)
+
+swagger = Swagger(app, template={
+    'info': {'title': 'Shop API', 'description': 'REST API інтернет-магазину', 'version': '2.0'},
+    'definitions': {
+        'Error': {
+            'type': 'object',
+            'properties': {'error': {'type': 'object', 'properties': {
+                'code': {'type': 'integer', 'example': 404},
+                'message': {'type': 'string', 'example': 'Товар не знайдено'},
+                'details': {'type': 'object'},
+            }}},
+        },
+    },
+})
 
 app.teardown_appcontext(models.close_db)
 
