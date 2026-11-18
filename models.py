@@ -190,11 +190,12 @@ def add_product(name, price, image='', image_data=None, image_mimetype=None,
                 discount_percent=0, category_id=None):
     db = get_db()
     with db:
-        db.execute(
+        cur = db.execute(
             'INSERT INTO products (name, price, image, image_data, image_mimetype, discount_percent, category_id) '
             'VALUES (?, ?, ?, ?, ?, ?, ?)',
             (name, price, image, image_data, image_mimetype, discount_percent, category_id),
         )
+        return cur.lastrowid
 
 
 def update_product(product_id, name, price, image='', image_data=None, image_mimetype=None,
