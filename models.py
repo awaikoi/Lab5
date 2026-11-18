@@ -116,10 +116,11 @@ def init_db():
 def add_feedback(name, email, message):
     db = get_db()
     with db:
-        db.execute(
+        cur = db.execute(
             'INSERT INTO feedback (name, email, message, created_at) VALUES (?, ?, ?, ?)',
             (name, email, message, now()),
         )
+        return cur.lastrowid
 
 
 def get_feedback():
