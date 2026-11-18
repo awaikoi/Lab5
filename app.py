@@ -4,12 +4,17 @@ from datetime import datetime
 from flask import Flask, render_template, session
 
 import models
-from routes import admin_bp, feedback_bp, shop_bp
+
+from routes import admin_bp, feedback_bp, shop_bp, api_v1, api_v2
+from routes.api.errors import register_error_handlers
 
 app = Flask(__name__)
 app.config['DATABASE'] = os.environ.get('DATABASE', os.path.join(app.root_path, 'db.sqlite'))
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-change-me')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 + 256 * 1024
+app.register_blueprint(api_v1)
+app.register_blueprint(api_v2)
+register_error_handlers(app)
 
 app.teardown_appcontext(models.close_db)
 
